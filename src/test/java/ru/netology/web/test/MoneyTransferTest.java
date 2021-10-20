@@ -33,4 +33,24 @@ public class MoneyTransferTest {
         assertEquals(balanceAfterTransferSecondCard, balanceOfSecondCardAfter);
     }
 
+    @Test
+    void shouldTransferFromSecondToFirst() {
+        val amount = 1000;
+        val loginPage = open("http://localhost:9999", LoginPage.class);
+        val authInfo = DataHelper.getAuthInfo();
+        val verificationPage = loginPage.validLogin(authInfo);
+        val verificationCode = DataHelper.getVerificationCode(authInfo);
+        val dashboardPage = verificationPage.verify(verificationCode);
+        val balanceOfFirstCardBefore = DashboardPage.getCurrentBalanceOfFirstCard();
+        val balanceOfSecondCardBefore = DashboardPage.getCurrentBalanceOfSecondCard();
+        val transferPage = dashboardPage.firstCard();
+        val cardInfo = DataHelper.getSecondCardInfo();
+        transferPage.transferCard(cardInfo, amount);
+        val balanceAfterTransferFirstCard = DataHelper.balanceOfSecondCardAfterTransfer(balanceOfFirstCardBefore, amount);
+        val balanceAfterTransferSecondCard = DataHelper.balanceOfFirstCardAfterTransfer(balanceOfSecondCardBefore, amount);
+        val balanceOfFirstCardAfter = DashboardPage.getCurrentBalanceOfFirstCard();
+        val balanceOfSecondCardAfter = DashboardPage.getCurrentBalanceOfSecondCard();
+        assertEquals(balanceAfterTransferFirstCard, balanceOfFirstCardAfter);
+        assertEquals(balanceAfterTransferSecondCard, balanceOfSecondCardAfter);
+    }
 }
