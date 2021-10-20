@@ -53,4 +53,19 @@ public class MoneyTransferTest {
         assertEquals(balanceAfterTransferFirstCard, balanceOfFirstCardAfter);
         assertEquals(balanceAfterTransferSecondCard, balanceOfSecondCardAfter);
     }
+
+
+    @Test
+    void shouldNotTransferMoreThanRestOfBalance() {
+        val amount = 15000;
+        val loginPage = open("http://localhost:9999", LoginPage.class);
+        val authInfo = DataHelper.getAuthInfo();
+        val verificationPage = loginPage.validLogin(authInfo);
+        val verificationCode = DataHelper.getVerificationCode(authInfo);
+        val dashboardPage = verificationPage.verify(verificationCode);
+        val transferPage = dashboardPage.firstCard();
+        val cardInfo = DataHelper.getSecondCardInfo();
+        transferPage.transferCard(cardInfo, amount);
+        transferPage.getNotification();
+    }
 }
